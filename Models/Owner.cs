@@ -7,6 +7,6 @@ public class Owner
     public string Gym { get; set; }
     public Country Country { get; set; }
     public int CountryId { get; set; }
-    public ICollection<Pokemon> Pokemons { get; set; }
-    public ICollection<PokemonOwner> PokemonOwners { get; set; }
+    public ICollection<Pokemon> Pokemons { get; set; } = new List<Pokemon>();
+    public ICollection<PokemonOwner> PokemonOwners { get; set; } = new List<PokemonOwner>();
 }

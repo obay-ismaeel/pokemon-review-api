@@ -13,12 +13,12 @@ public class AppDbContext : DbContext
     public DbSet<Review> Reviews { get; set; }
     public DbSet<Reviewer> Reviewers { get; set; }
     public DbSet<PokemonCategory> PokemonCategories { get; set; }
-    public DbSet<PokemonOwner> pokemonOwners { get; set; }
+    public DbSet<PokemonOwner> PokemonOwners { get; set; }
 
     public AppDbContext(DbContextOptions options) : base(options)
     {
     }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
