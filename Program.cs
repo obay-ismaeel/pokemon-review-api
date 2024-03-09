@@ -15,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlServer(con
 
 builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICountryRepository, CountryRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
