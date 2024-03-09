@@ -13,6 +13,10 @@ builder.Services.AddSwaggerGen();
 var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
 builder.Services.AddDbContext<AppDbContext>( options => options.UseSqlServer(connectionString) );
 
+builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

@@ -61,7 +61,7 @@ public static class DbSeeder
     public static IEnumerable<Review> LoadReviews() => new List<Review>()
     {
         new Review{Id=1, Title="Bad AF", Text="It made me lose a whole game", Rating=1, PokemonId=1, ReviewerId=2},
-        new Review{Id=2, Title="Good AF", Text="It saved me at the last sec", Rating=5, PokemonId=1, ReviewerId=2},
+        new Review{Id=2, Title="Good AF", Text="It saved me at the last sec", Rating=4, PokemonId=1, ReviewerId=2},
         new Review{Id=3, Title="Not bad", Text="It looks like a good one", Rating=3, PokemonId=2, ReviewerId=1},
         new Review{Id=4, Title="A little complex", Text="It's capabilities are confusing", Rating=2, PokemonId=3, ReviewerId=3},
         new Review{Id=5, Title="Bad AF", Text="It made me lose a whole game", Rating=1, PokemonId=4, ReviewerId=4},
