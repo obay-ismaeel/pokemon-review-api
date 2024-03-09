@@ -35,6 +35,6 @@ public class PokemonRepository : IPokemonRepository
 
     public bool PokemonExists(int id)
     {
-        return _context.Pokemons.Find(id) is null ? false : true;
+        return _context.Pokemons.Any(p => p.Id == id);
     }
 }
