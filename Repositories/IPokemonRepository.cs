@@ -4,7 +4,7 @@ namespace PokemonReviewApp.Repositories;
 
 public interface IPokemonRepository
 {
-    ICollection<Pokemon> All();
+    ICollection<Pokemon> GetAll();
     Pokemon GetById(int id);
     Pokemon GetByName(string name);
     decimal GetPokemonRating(int id);

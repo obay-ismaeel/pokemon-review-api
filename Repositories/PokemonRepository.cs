@@ -14,7 +14,7 @@ public class PokemonRepository : IPokemonRepository
         _context = context;
     }
 
-    public ICollection<Pokemon> All() => _context.Pokemons.OrderBy(p => p.Name).ToList();
+    public ICollection<Pokemon> GetAll() => _context.Pokemons.OrderBy(p => p.Name).ToList();
 
     public Pokemon GetById(int id) => _context.Pokemons.Find(id);
 

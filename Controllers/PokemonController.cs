@@ -23,7 +23,7 @@ public class PokemonController : ControllerBase
     [ProducesResponseType(200, Type = typeof(IEnumerable<PokemonDto>) )]
     public IActionResult Index()
     {
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.All());
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAll());
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
