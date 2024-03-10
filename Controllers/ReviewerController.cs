@@ -49,7 +49,7 @@ public class ReviewerController : ControllerBase
     }
 
     [HttpGet("{id}/reviews")]
-    [ProducesResponseType(200, Type = typeof(ReviewerDto))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public IActionResult GetReviewerReviews(int id)
@@ -57,7 +57,7 @@ public class ReviewerController : ControllerBase
         if (!_reviewerRepository.ReviewerExists(id))
             return NotFound();
 
-        var reviews = _mapper.Map<ReviewerDto>(_reviewerRepository.GetReviewsByReviewerId(id));
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewerRepository.GetReviewsByReviewerId(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

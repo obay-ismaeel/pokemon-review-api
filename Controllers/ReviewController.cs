@@ -49,11 +49,11 @@ public class ReviewController : ControllerBase
     }
 
     [HttpGet("bypokemonid/{id}")]
-    [ProducesResponseType(200, Type = typeof(ReviewDto))]
+    [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]
     [ProducesResponseType(400)]
     public IActionResult GetPokemonReviews(int id)
     {
-        var reviews = _mapper.Map<ReviewDto>(_reviewRepository.GetAllByPokemonId(id));
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAllByPokemonId(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
