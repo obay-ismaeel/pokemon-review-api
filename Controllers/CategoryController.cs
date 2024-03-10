@@ -49,11 +49,14 @@ public class CategoryController : ControllerBase
         return Ok(category);
     }
 
-    [HttpGet("{id}/pokemon")]
+    [HttpGet("{id}/pokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<PokemonDto>))]
     [ProducesResponseType(400)]
     public IActionResult GetPokemonByCategoryId(int id)
     {
+        if(!_categoryRepository.CategoryExists(id))
+            return NotFound();
+
         var pokemons = _categoryRepository.GetPokemonsByCategoryId(id);
         var pokemonDtos = _mapper.Map<IEnumerable<PokemonDto>>(pokemons);
 
