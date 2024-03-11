@@ -6,13 +6,13 @@ using PokemonReviewApp.Repositories;
 namespace PokemonReviewApp.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class ReviewController : ControllerBase
+[Route("api/[controller]")]
+public class ReviewsController : ControllerBase
 {
     private readonly IReviewRepository _reviewRepository;
     private readonly IMapper _mapper;
 
-    public ReviewController(IReviewRepository reviewRepository, IMapper mapper)
+    public ReviewsController(IReviewRepository reviewRepository, IMapper mapper)
     {
         _reviewRepository = reviewRepository;
         _mapper = mapper;
@@ -48,7 +48,7 @@ public class ReviewController : ControllerBase
         return Ok(review);
     }
 
-    [HttpGet("bypokemonid/{id}")]
+    [HttpGet("/api/pokemon/{id}/reviews")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<ReviewDto>))]
     [ProducesResponseType(400)]
     public IActionResult GetPokemonReviews(int id)

@@ -7,12 +7,12 @@ namespace PokemonReviewApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class OwnerController : ControllerBase
+public class OwnersController : ControllerBase
 {
     private readonly IOwnerRepository _ownerRepository;
     private readonly IMapper _mapper;
 
-    public OwnerController(IOwnerRepository ownerRepository, IMapper mapper)
+    public OwnersController(IOwnerRepository ownerRepository, IMapper mapper)
     {
         _ownerRepository = ownerRepository;
         _mapper = mapper;
@@ -48,7 +48,7 @@ public class OwnerController : ControllerBase
         return Ok(owner);
     }
 
-    [HttpGet("{id}/pokemon")]
+    [HttpGet("{id}/pokemons")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<PokemonDto>))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
@@ -65,27 +65,13 @@ public class OwnerController : ControllerBase
         return Ok(pokemons);
     }
 
-    [HttpGet("pokemon/{id}")]
+    [HttpGet("/api/pokemons/{id}/owners")]
     [ProducesResponseType(200, Type = typeof(IEnumerable<OwnerDto>))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
     public IActionResult GetPokemonOwners(int id)
     {
         var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetOwnersOfPokemon(id));
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
-        return Ok(owners);
-    }
-
-    [HttpGet("country/{id}")]
-    [ProducesResponseType(200, Type = typeof(IEnumerable<OwnerDto>))]
-    [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
-    public IActionResult GetCountryOwners(int id)
-    {
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetOwnersByCountry(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

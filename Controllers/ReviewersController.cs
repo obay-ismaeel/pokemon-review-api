@@ -6,13 +6,13 @@ using PokemonReviewApp.Repositories;
 namespace PokemonReviewApp.Controllers;
 
 [ApiController]
-[Route("[controller]")]
-public class ReviewerController : ControllerBase
+[Route("api/[controller]")]
+public class ReviewersController : ControllerBase
 {
     private readonly IReviewerRepository _reviewerRepository;
     private readonly IMapper _mapper;
 
-    public ReviewerController(IReviewerRepository reviewerRepository, IMapper mapper)
+    public ReviewersController(IReviewerRepository reviewerRepository, IMapper mapper)
     {
         _reviewerRepository = reviewerRepository;
         _mapper = mapper;

@@ -22,6 +22,8 @@ builder.Services.AddScoped<IReviewerRepository, ReviewerRepository>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
+builder.Services.AddRouting(options => options.LowercaseUrls = true);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

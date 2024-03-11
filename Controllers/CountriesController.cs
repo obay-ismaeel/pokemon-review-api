@@ -8,12 +8,12 @@ namespace PokemonReviewApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CountryController : ControllerBase
+public class CountriesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly ICountryRepository _countryRepository;
 
-    public CountryController(IMapper mapper, ICountryRepository countryRepository)
+    public CountriesController(IMapper mapper, ICountryRepository countryRepository)
     {
         _mapper = mapper;
         _countryRepository = countryRepository;
@@ -49,7 +49,7 @@ public class CountryController : ControllerBase
         return Ok(country);
     }
 
-    [HttpGet("byowner/{id}")]
+    [HttpGet("/api/owners/{id}/country")]
     [ProducesResponseType(200, Type = typeof(CountryDto))]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
