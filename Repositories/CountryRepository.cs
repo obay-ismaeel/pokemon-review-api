@@ -27,7 +27,15 @@ public class CountryRepository : ICountryRepository
     public bool Create(Country country)
     {
         _context.Countries.Add(country);
-        return _context.SaveChanges() > 0 ? true : false;
+        return Save();
+    }
+
+    public bool Delete(int id)
+    {
+        var item = _context.Countries.Find(id);
+        if (item != null)
+            _context.Countries.Remove(item);
+        return Save();
     }
 
     public ICollection<Country> GetAll()
@@ -48,5 +56,16 @@ public class CountryRepository : ICountryRepository
     public ICollection<Owner> GetOwnersByCountry(int id)
     {
         return _context.Owners.Where(o => o.CountryId == id).ToList();
+    }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
+    public bool Update(Country country)
+    {
+        _context.Countries.Update(country);
+        return Save();
     }
 }

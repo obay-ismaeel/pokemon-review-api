@@ -84,4 +84,30 @@ public class ReviewersController : ControllerBase
 
         return Created();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Update(ReviewerDto reviewerDto, int id)
+    {
+        if (reviewerDto.Id != id)
+            return BadRequest("The provided IDs don't match!");
+
+        if (!_reviewerRepository.ReviewerExists(id))
+            return NotFound("There is no such Id!");
+
+        var reviewer = _mapper.Map<Reviewer>(reviewerDto);
+
+        if (!_reviewerRepository.Update(reviewer))
+        {
+            ModelState.AddModelError("error", "Something went wrong!");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

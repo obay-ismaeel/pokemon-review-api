@@ -92,4 +92,30 @@ public class CategoriesController : ControllerBase
 
         return Created();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Create(CategoryDto categoryDto, int id)
+    {
+        if (categoryDto.Id != id)
+            return BadRequest("The IDs provided don't match!");
+
+        if (!_categoryRepository.CategoryExists(id))
+            return NotFound("The category doesn't exist!");
+
+        var category = _mapper.Map<Category>(categoryDto);
+
+        if (!_categoryRepository.Update(category))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

@@ -16,7 +16,13 @@ public class CategoryRepository : ICategoryRepository
     public bool Create(Category category)
     {
         _context.Categories.Add(category);
-        return _context.SaveChanges() > 0 ? true : false;
+        return Save();
+    }
+
+    public bool Update(Category category)
+    {
+        _context.Categories.Update(category);
+        return Save();
     }
 
     public bool CategoryExists(int id)
@@ -46,5 +52,24 @@ public class CategoryRepository : ICategoryRepository
         var category = _context.Categories.Include(c => c.Pokemons).SingleOrDefault(c => c.Id == id);
         
         return category?.Pokemons ?? new List<Pokemon>();
+    }
+
+    public bool Delete(Category category)
+    {
+        _context.Categories.Remove(category);
+        return Save();
+    }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
+    public bool Delete(int id)
+    {
+        var item = _context.Countries.Find(id);
+        if (item != null)
+            _context.Countries.Remove(item);
+        return Save();
     }
 }

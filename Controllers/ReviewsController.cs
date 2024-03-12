@@ -96,4 +96,36 @@ public class ReviewsController : ControllerBase
 
         return Created();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Update(ReviewDto reviewDto, int id)
+    {
+        if(reviewDto.Id != id)
+            return BadRequest("The IDs provided don't match!");
+
+        if (!_reviewRepository.ReviewExists(id))
+            return NotFound("Invalid review ID!");
+        
+        if (!_reviewerRepository.ReviewerExists(reviewDto.ReviewerId))
+            return BadRequest("Invalid reviewer ID!");
+
+        if (!_pokemonRepository.PokemonExists(reviewDto.PokemonId))
+            return BadRequest("Invalid pokemon ID!");
+
+        var review = _mapper.Map<Review>(reviewDto);
+
+        if (!_reviewRepository.Update(review))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

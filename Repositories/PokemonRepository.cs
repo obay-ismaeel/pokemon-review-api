@@ -20,6 +20,13 @@ public class PokemonRepository : IPokemonRepository
         return _context.SaveChanges() > 0 ? true : false ;
     }
 
+    public bool Delete(int id)
+    {
+        var item = _context.Countries.Find(id);
+        if (item != null)
+            _context.Countries.Remove(item);
+        return Save();
+    }
     public ICollection<Pokemon> GetAll() => _context.Pokemons.OrderBy(p => p.Name).ToList();
 
     public Pokemon GetById(int id) => _context.Pokemons.Find(id);
@@ -42,5 +49,16 @@ public class PokemonRepository : IPokemonRepository
     public bool PokemonExists(int id)
     {
         return _context.Pokemons.Any(p => p.Id == id);
+    }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
+    public bool Update(Pokemon pokemon)
+    {
+        _context.Pokemons.Update(pokemon);
+        return Save();
     }
 }

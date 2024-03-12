@@ -9,4 +9,7 @@ public interface IReviewRepository
     ICollection<Review> GetAllByPokemonId(int id);
     bool ReviewExists(int id);
     bool Create(Review review);
+    bool Update(Review review);
+    bool Delete(int id);
+    bool Save();
 }

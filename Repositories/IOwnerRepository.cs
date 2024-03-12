@@ -11,4 +11,7 @@ public interface IOwnerRepository
     ICollection<Owner> GetOwnersByCountry(int id);
     bool OwnerExists(int id);
     bool Create(Owner owner);
+    bool Update(Owner owner);
+    bool Delete(int id);
+    bool Save();
 }

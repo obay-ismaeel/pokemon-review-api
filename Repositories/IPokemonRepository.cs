@@ -10,4 +10,7 @@ public interface IPokemonRepository
     decimal GetPokemonRating(int id);
     bool PokemonExists(int id);
     bool Create(Pokemon pokemon);
+    bool Update(Pokemon pokemon);
+    bool Delete(int id);
+    bool Save();
 }

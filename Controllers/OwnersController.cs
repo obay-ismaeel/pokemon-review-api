@@ -87,15 +87,44 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(OwnerDto ownerDto)
     {
-        var owner = _mapper.Map<Owner>(ownerDto);
-
         if (!_countryRepository.CountryExists(ownerDto.CountryId))
         {
             ModelState.AddModelError("error", "No such country is found!");
             return BadRequest(ModelState);
         }
 
+        var owner = _mapper.Map<Owner>(ownerDto);
+
         if (!_ownerRepository.Create(owner))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
+    }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Update(OwnerDto ownerDto, int id)
+    {
+        if (ownerDto.Id != id)
+            return BadRequest("The provided IDs doesn't match!");
+
+        if (!_ownerRepository.OwnerExists(id))
+            return NotFound("Invalid owner ID!");
+
+        if (!_countryRepository.CountryExists(ownerDto.CountryId))
+            return BadRequest("Invalid country ID!");
+
+        var owner = _mapper.Map<Owner>(ownerDto);
+
+        if (!_ownerRepository.Update(owner))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);

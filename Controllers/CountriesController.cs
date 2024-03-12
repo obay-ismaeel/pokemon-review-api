@@ -108,4 +108,30 @@ public class CountriesController : ControllerBase
 
         return Created();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Create(CountryDto countryDto, int id)
+    {
+        if (countryDto.Id != id)
+            return BadRequest("The provided IDs don't match!");
+
+        if (!_countryRepository.CountryExists(id))
+            return NotFound("There is no such Id!");
+
+        var country = _mapper.Map<Country>(countryDto);
+
+        if (!_countryRepository.Update(country))
+        {
+            ModelState.AddModelError("error", "Something went wrong!");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

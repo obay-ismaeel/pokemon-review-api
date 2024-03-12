@@ -18,6 +18,14 @@ public class ReviewerRepository : IReviewerRepository
         return _context.SaveChanges() > 0 ? true : false;
     }
 
+    public bool Delete(int id)
+    {
+        var item = _context.Countries.Find(id);
+        if (item != null)
+            _context.Countries.Remove(item);
+        return Save();
+    }
+
     public ICollection<Reviewer> GetAll()
     {
         return _context.Reviewers.ToList();
@@ -36,5 +44,16 @@ public class ReviewerRepository : IReviewerRepository
     public bool ReviewerExists(int id)
     {
         return _context.Reviewers.Any(r => r.Id == id);
+    }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
+    public bool Update(Reviewer reviewer)
+    {
+        _context.Reviewers.Update(reviewer);
+        return Save();
     }
 }

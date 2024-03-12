@@ -16,7 +16,21 @@ public class OwnerRepository : IOwnerRepository
     public bool Create(Owner owner)
     {
         _context.Owners.Add(owner);
-        return _context.SaveChanges() > 0 ? true : false;
+        return Save();
+    }
+
+    public bool Delete(Owner owner)
+    {
+        _context.Owners.Remove(owner);
+        return Save();
+    }
+
+    public bool Delete(int id)
+    {
+        var item = _context.Countries.Find(id);
+        if (item != null)
+            _context.Countries.Remove(item);
+        return Save();
     }
 
     public ICollection<Owner> GetAll()
@@ -48,5 +62,16 @@ public class OwnerRepository : IOwnerRepository
     public bool OwnerExists(int id)
     {
         return _context.Owners.Any(o => o.Id == id);
+    }
+
+    public bool Save()
+    {
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
+    public bool Update(Owner owner)
+    {
+        _context.Owners.Update(owner);
+        return Save();
     }
 }

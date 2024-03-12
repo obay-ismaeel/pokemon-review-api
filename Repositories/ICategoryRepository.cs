@@ -11,5 +11,8 @@ public interface ICategoryRepository
 
     bool CategoryExists(string name);
     bool Create(Category category);
+    bool Update(Category category);
+    bool Delete(int id);
+    bool Save();
 
 }

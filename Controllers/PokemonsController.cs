@@ -85,4 +85,30 @@ public class PokemonsController : ControllerBase
 
         return Created();
     }
+
+    [HttpPut("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Update(PokemonDto pokemonDto, int id)
+    {
+        if (pokemonDto.Id != id)
+            return BadRequest("The IDs provided don't match!");
+
+        if (!_pokemonRepository.PokemonExists(id))
+            return NotFound("There is no such ID!");
+
+        var pokemon = _mapper.Map<Pokemon>(pokemonDto);
+
+        if (!_pokemonRepository.Update(pokemon))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }
