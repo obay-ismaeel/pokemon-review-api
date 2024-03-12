@@ -17,6 +17,19 @@ public class CountryRepository : ICountryRepository
         return _context.Countries.Any(c => c.Id == id);
     }
 
+    public bool CountryExists(string name)
+    {
+        name = name.ToLower().Trim();
+        var country = _context.Countries.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();
+        return country is null ? false : true;
+    }
+
+    public bool Create(Country country)
+    {
+        _context.Countries.Add(country);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
     public ICollection<Country> GetAll()
     {
         return _context.Countries.OrderBy(c => c.Name).ToList();

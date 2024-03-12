@@ -14,6 +14,12 @@ public class PokemonRepository : IPokemonRepository
         _context = context;
     }
 
+    public bool Create(Pokemon pokemon)
+    {
+        _context.Pokemons.Add(pokemon);
+        return _context.SaveChanges() > 0 ? true : false ;
+    }
+
     public ICollection<Pokemon> GetAll() => _context.Pokemons.OrderBy(p => p.Name).ToList();
 
     public Pokemon GetById(int id) => _context.Pokemons.Find(id);

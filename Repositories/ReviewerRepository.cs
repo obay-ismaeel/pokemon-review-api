@@ -12,6 +12,12 @@ public class ReviewerRepository : IReviewerRepository
         _context = context;
     }
 
+    public bool Create(Reviewer reviewer)
+    {
+        _context.Reviewers.Add(reviewer);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
     public ICollection<Reviewer> GetAll()
     {
         return _context.Reviewers.ToList();

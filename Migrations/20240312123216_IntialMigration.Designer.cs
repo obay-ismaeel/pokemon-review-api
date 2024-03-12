@@ -12,8 +12,8 @@ using PokemonReviewApp.Data;
 namespace PokemonReviewApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240308204411_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20240312123216_IntialMigration")]
+    partial class IntialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -120,7 +120,7 @@ namespace PokemonReviewApp.Migrations
 
                     b.HasIndex("PokemonId");
 
-                    b.ToTable("pokemonOwners");
+                    b.ToTable("PokemonOwners");
                 });
 
             modelBuilder.Entity("PokemonReviewApp.Models.Review", b =>

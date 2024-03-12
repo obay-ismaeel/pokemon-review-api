@@ -83,5 +83,29 @@ public class CountriesController : ControllerBase
         return Ok(owners);
     }
 
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    public IActionResult Create(CountryDto countryDto)
+    {
+        if (_countryRepository.CountryExists(countryDto.Name))
+        {
+            ModelState.AddModelError("error", "Country already exists!");
+            return Conflict(ModelState);
+        }
 
+        var country = _mapper.Map<Country>(countryDto);
+
+        if (!_countryRepository.Create(country))
+        {
+            ModelState.AddModelError("error", "Something went wrong!");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
+    }
 }

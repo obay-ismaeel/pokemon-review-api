@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dtos;
+using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
@@ -10,11 +11,15 @@ namespace PokemonReviewApp.Controllers;
 public class ReviewsController : ControllerBase
 {
     private readonly IReviewRepository _reviewRepository;
+    private readonly IReviewerRepository _reviewerRepository;
+    private readonly IPokemonRepository _pokemonRepository;
     private readonly IMapper _mapper;
 
-    public ReviewsController(IReviewRepository reviewRepository, IMapper mapper)
+    public ReviewsController(IReviewRepository reviewRepository, IPokemonRepository pokemonRepository, IReviewerRepository reviewerRepository, IMapper mapper)
     {
         _reviewRepository = reviewRepository;
+        _pokemonRepository = pokemonRepository;
+        _reviewerRepository = reviewerRepository;
         _mapper = mapper;
     }
 
@@ -59,5 +64,36 @@ public class ReviewsController : ControllerBase
             return BadRequest(ModelState);
 
         return Ok(reviews);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    public IActionResult Create(ReviewDto reviewDto)
+    {
+        if (!_reviewerRepository.ReviewerExists(reviewDto.ReviewerId))
+        {
+            ModelState.AddModelError("error", "No such reviewer!");
+            return BadRequest(ModelState);
+        }
+
+        if (!_pokemonRepository.PokemonExists(reviewDto.PokemonId))
+        {
+            ModelState.AddModelError("error", "No such pokemon!");
+            return BadRequest(ModelState);
+        }
+
+        var review = _mapper.Map<Review>(reviewDto);
+
+        if (!_reviewRepository.Create(review))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
     }
 }

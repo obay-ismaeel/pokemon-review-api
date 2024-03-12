@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dtos;
+using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
@@ -10,11 +11,13 @@ namespace PokemonReviewApp.Controllers;
 public class OwnersController : ControllerBase
 {
     private readonly IOwnerRepository _ownerRepository;
+    private readonly ICountryRepository _countryRepository;
     private readonly IMapper _mapper;
 
-    public OwnersController(IOwnerRepository ownerRepository, IMapper mapper)
+    public OwnersController(IOwnerRepository ownerRepository, ICountryRepository countryRepository, IMapper mapper)
     {
         _ownerRepository = ownerRepository;
+        _countryRepository = countryRepository;
         _mapper = mapper;
     }
 
@@ -77,5 +80,30 @@ public class OwnersController : ControllerBase
             return BadRequest(ModelState);
 
         return Ok(owners);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    public IActionResult Create(OwnerDto ownerDto)
+    {
+        var owner = _mapper.Map<Owner>(ownerDto);
+
+        if (!_countryRepository.CountryExists(ownerDto.CountryId))
+        {
+            ModelState.AddModelError("error", "No such country is found!");
+            return BadRequest(ModelState);
+        }
+
+        if (!_ownerRepository.Create(owner))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
     }
 }

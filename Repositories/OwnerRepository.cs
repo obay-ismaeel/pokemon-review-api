@@ -13,6 +13,12 @@ public class OwnerRepository : IOwnerRepository
         _context = context;
     }
 
+    public bool Create(Owner owner)
+    {
+        _context.Owners.Add(owner);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
     public ICollection<Owner> GetAll()
     {
         return _context.Owners.ToList();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dtos;
+using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
@@ -65,4 +66,22 @@ public class ReviewersController : ControllerBase
         return Ok(reviews);
     }
 
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    public IActionResult Create(ReviewerDto reviewerDto)
+    {
+        var reviewer = _mapper.Map<Reviewer>(reviewerDto);
+
+        if (!_reviewerRepository.Create(reviewer))
+        {
+            ModelState.AddModelError("error", "Something went wrong!");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
+    }
 }

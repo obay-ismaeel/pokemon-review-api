@@ -66,4 +66,23 @@ public class PokemonsController : ControllerBase
 
         return Ok(rating);
     }
+
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    public IActionResult Create(PokemonDto pokemonDto)
+    {
+        var pokemon = _mapper.Map<Pokemon>(pokemonDto);
+
+        if (!_pokemonRepository.Create(pokemon))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
+    }
 }

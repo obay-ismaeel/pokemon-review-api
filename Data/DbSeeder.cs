@@ -5,8 +5,9 @@ namespace PokemonReviewApp.Data;
 
 public static class DbSeeder
 {
-    public static void Seed(AppDbContext context)
+    public static void CreateAndSeedDb(AppDbContext context)
     {
+        context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
         
         context.Countries.AddRange(LoadCountries());

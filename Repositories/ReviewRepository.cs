@@ -12,6 +12,12 @@ public class ReviewRepository : IReviewRepository
         _context = context;
     }
 
+    public bool Create(Review review)
+    {
+        _context.Reviews.Add(review);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
     public ICollection<Review> GetAll()
     {
         return _context.Reviews.ToList();

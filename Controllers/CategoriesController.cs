@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Dtos;
+using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
@@ -64,5 +65,31 @@ public class CategoriesController : ControllerBase
             return BadRequest(ModelState);
 
         return Ok(pokemonDtos);
+    }
+
+    [HttpPost]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(409)]
+    public IActionResult Create(CategoryDto categoryDto)
+    {
+        if (_categoryRepository.CategoryExists(categoryDto.Name))
+        {
+            ModelState.AddModelError("error", "Category already exists!");
+            return Conflict(ModelState);
+        }
+
+        var category = _mapper.Map<Category>(categoryDto);
+        
+        if (!_categoryRepository.Create(category))
+        {
+            ModelState.AddModelError("error", "Something went wrong");
+            return StatusCode(500, ModelState);
+        }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Created();
     }
 }

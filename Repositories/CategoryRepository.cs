@@ -13,9 +13,22 @@ public class CategoryRepository : ICategoryRepository
         _context = context;
     }
 
+    public bool Create(Category category)
+    {
+        _context.Categories.Add(category);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+
     public bool CategoryExists(int id)
     {
         return _context.Categories.Any(c => c.Id == id);
+    }
+
+    public bool CategoryExists(string name)
+    {
+        name = name.ToLower().Trim();
+        var category = _context.Categories.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();
+        return category is null ? false : true;
     }
 
     public ICollection<Category> GetAll()
