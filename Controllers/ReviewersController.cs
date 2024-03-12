@@ -110,4 +110,21 @@ public class ReviewersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
+    {
+        if (!_reviewerRepository.ReviewerExists(id))
+            return NotFound("Invalid reviewer ID!");
+
+        _reviewerRepository.Delete(id);
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

@@ -22,9 +22,9 @@ public class PokemonRepository : IPokemonRepository
 
     public bool Delete(int id)
     {
-        var item = _context.Countries.Find(id);
+        var item = _context.Pokemons.Find(id);
         if (item != null)
-            _context.Countries.Remove(item);
+            _context.Pokemons.Remove(item);
         return Save();
     }
     public ICollection<Pokemon> GetAll() => _context.Pokemons.OrderBy(p => p.Name).ToList();

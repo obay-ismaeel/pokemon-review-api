@@ -97,7 +97,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult Create(CategoryDto categoryDto, int id)
+    public IActionResult Update(CategoryDto categoryDto, int id)
     {
         if (categoryDto.Id != id)
             return BadRequest("The IDs provided don't match!");
@@ -112,6 +112,23 @@ public class CategoriesController : ControllerBase
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
         }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
+    {
+        if (!_categoryRepository.CategoryExists(id))
+            return NotFound("Invalid category ID!");
+
+        _categoryRepository.Delete(id);
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

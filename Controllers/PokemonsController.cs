@@ -111,4 +111,21 @@ public class PokemonsController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
+    {
+        if (!_pokemonRepository.PokemonExists(id))
+            return NotFound("Invalid pokemon ID!");
+
+        _pokemonRepository.Delete(id);
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }

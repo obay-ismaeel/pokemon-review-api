@@ -20,9 +20,9 @@ public class ReviewerRepository : IReviewerRepository
 
     public bool Delete(int id)
     {
-        var item = _context.Countries.Find(id);
+        var item = _context.Reviewers.Find(id);
         if (item != null)
-            _context.Countries.Remove(item);
+            _context.Reviewers.Remove(item);
         return Save();
     }
 

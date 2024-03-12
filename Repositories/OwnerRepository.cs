@@ -27,9 +27,9 @@ public class OwnerRepository : IOwnerRepository
 
     public bool Delete(int id)
     {
-        var item = _context.Countries.Find(id);
+        var item = _context.Owners.Find(id);
         if (item != null)
-            _context.Countries.Remove(item);
+            _context.Owners.Remove(item);
         return Save();
     }
 

@@ -20,9 +20,9 @@ public class ReviewRepository : IReviewRepository
 
     public bool Delete(int id)
     {
-        var item = _context.Countries.Find(id);
+        var item = _context.Reviews.Find(id);
         if (item != null)
-            _context.Countries.Remove(item);
+            _context.Reviews.Remove(item);
         return Save();
     }
 

@@ -54,12 +54,6 @@ public class CategoryRepository : ICategoryRepository
         return category?.Pokemons ?? new List<Pokemon>();
     }
 
-    public bool Delete(Category category)
-    {
-        _context.Categories.Remove(category);
-        return Save();
-    }
-
     public bool Save()
     {
         return _context.SaveChanges() > 0 ? true : false;
@@ -67,9 +61,9 @@ public class CategoryRepository : ICategoryRepository
 
     public bool Delete(int id)
     {
-        var item = _context.Countries.Find(id);
+        var item = _context.Categories.Find(id);
         if (item != null)
-            _context.Countries.Remove(item);
+            _context.Categories.Remove(item);
         return Save();
     }
 }

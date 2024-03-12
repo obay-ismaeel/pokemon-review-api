@@ -113,7 +113,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
-    public IActionResult Create(CountryDto countryDto, int id)
+    public IActionResult Update(CountryDto countryDto, int id)
     {
         if (countryDto.Id != id)
             return BadRequest("The provided IDs don't match!");
@@ -128,6 +128,23 @@ public class CountriesController : ControllerBase
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
         }
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
+    {
+        if (!_countryRepository.CountryExists(id))
+            return NotFound("Invalid country ID!");
+
+        _countryRepository.Delete(id);
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

@@ -135,4 +135,21 @@ public class OwnersController : ControllerBase
 
         return Created();
     }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(204)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public IActionResult Delete(int id)
+    {
+        if (!_ownerRepository.OwnerExists(id))
+            return NotFound("Invalid owner ID!");
+
+        _ownerRepository.Delete(id);
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return NoContent();
+    }
 }
