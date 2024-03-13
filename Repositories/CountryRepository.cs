@@ -12,21 +12,30 @@ public class CountryRepository : ICountryRepository
         _context = context;
     }
 
-    public bool Exists(int id)
+    public Country GetById(int id)
     {
-        return _context.Countries.Any(c => c.Id == id);
+        return _context.Countries.Find(id);
     }
-
-    public bool Exists(string name)
+    
+    public ICollection<Country> GetAll()
     {
-        name = name.ToLower().Trim();
-        var country = _context.Countries.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();
-        return country is null ? false : true;
+        return _context.Countries.OrderBy(c => c.Name).ToList();
+    }
+    
+    public Country GetByOwnerId(int id)
+    {
+        return _context.Owners.Where(o => o.Id == id).Select(o=>o.Country).FirstOrDefault();
     }
 
     public bool Create(Country country)
     {
         _context.Countries.Add(country);
+        return Save();
+    }
+
+    public bool Update(Country country)
+    {
+        _context.Countries.Update(country);
         return Save();
     }
 
@@ -38,34 +47,20 @@ public class CountryRepository : ICountryRepository
         return Save();
     }
 
-    public ICollection<Country> GetAll()
+    public bool Exists(int id)
     {
-        return _context.Countries.OrderBy(c => c.Name).ToList();
+        return _context.Countries.Any(c => c.Id == id);
     }
-
-    public Country GetById(int id)
+    
+    public bool Exists(string name)
     {
-        return _context.Countries.Find(id);
-    }
-
-    public Country GetByOwnerId(int id)
-    {
-        return _context.Owners.Where(o => o.Id == id).Select(o=>o.Country).FirstOrDefault();
-    }
-
-    public ICollection<Owner> GetOwnersByCountry(int id)
-    {
-        return _context.Owners.Where(o => o.CountryId == id).ToList();
+        name = name.ToLower().Trim();
+        var country = _context.Countries.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();
+        return country is null ? false : true;
     }
 
     public bool Save()
     {
         return _context.SaveChanges() > 0 ? true : false;
-    }
-
-    public bool Update(Country country)
-    {
-        _context.Countries.Update(country);
-        return Save();
     }
 }

@@ -11,11 +11,13 @@ namespace PokemonReviewApp.Controllers;
 public class ReviewersController : ControllerBase
 {
     private readonly IReviewerRepository _reviewerRepository;
+    private readonly IReviewRepository _reviewRepository;
     private readonly IMapper _mapper;
 
-    public ReviewersController(IReviewerRepository reviewerRepository, IMapper mapper)
+    public ReviewersController(IReviewerRepository reviewerRepository, IReviewRepository reviewRepository, IMapper mapper)
     {
         _reviewerRepository = reviewerRepository;
+        _reviewRepository = reviewRepository;
         _mapper = mapper;
     }
 
@@ -58,7 +60,7 @@ public class ReviewersController : ControllerBase
         if (!_reviewerRepository.Exists(id))
             return NotFound();
 
-        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewerRepository.GetReviewsByReviewerId(id));
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAllByReviewerId(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

@@ -13,15 +13,35 @@ public class OwnerRepository : IOwnerRepository
         _context = context;
     }
 
+    public Owner GetById(int id)
+    {
+        return _context.Owners.Find(id);
+    }
+    
+    public ICollection<Owner> GetAll()
+    {
+        return _context.Owners.ToList();
+    }
+    
+    public ICollection<Owner> GetAllByCountryId(int id)
+    {
+        return _context.Owners.Where(o => o.CountryId == id).ToList();
+    }
+    
+    public ICollection<Owner> GetAllByPokemonId(int id)
+    {
+        return _context.Pokemons.Include(p => p.Owners).SingleOrDefault(p => p.Id == id)?.Owners;
+    }
+
     public bool Create(Owner owner)
     {
         _context.Owners.Add(owner);
         return Save();
     }
-
-    public bool Delete(Owner owner)
+    
+    public bool Update(Owner owner)
     {
-        _context.Owners.Remove(owner);
+        _context.Owners.Update(owner);
         return Save();
     }
 
@@ -33,32 +53,6 @@ public class OwnerRepository : IOwnerRepository
         return Save();
     }
 
-    public ICollection<Owner> GetAll()
-    {
-        return _context.Owners.ToList();
-    }
-
-    public Owner GetById(int id)
-    {
-        return _context.Owners.Find(id);
-    }
-
-    public ICollection<Owner> GetAllByCountryId(int id)
-    {
-        return _context.Owners.Where(o => o.CountryId == id).ToList();
-    }
-
-    public ICollection<Owner> GetAllByPokemonId(int id)
-    {
-        return _context.Pokemons.Include(p => p.Owners).SingleOrDefault(p => p.Id == id)?.Owners;
-    }
-
-    public ICollection<Pokemon> GetPokemonByOwnerId(int id)
-    {
-        return _context.Owners.Include(o => o.Pokemons).SingleOrDefault(p => p.Id == id)?.Pokemons;
-    }
-
-
     public bool Exists(int id)
     {
         return _context.Owners.Any(o => o.Id == id);
@@ -69,9 +63,4 @@ public class OwnerRepository : IOwnerRepository
         return _context.SaveChanges() > 0 ? true : false;
     }
 
-    public bool Update(Owner owner)
-    {
-        _context.Owners.Update(owner);
-        return Save();
-    }
 }

@@ -12,11 +12,13 @@ namespace PokemonReviewApp.Controllers;
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IPokemonRepository _pokemonRepository;
     private readonly IMapper _mapper;
 
-    public CategoriesController(ICategoryRepository categoryRepository, IMapper mapper)
+    public CategoriesController(ICategoryRepository categoryRepository, IPokemonRepository pokemonRepository, IMapper mapper)
     {
         _categoryRepository = categoryRepository;
+        _pokemonRepository = pokemonRepository;
         _mapper = mapper;
     }
 
@@ -58,7 +60,7 @@ public class CategoriesController : ControllerBase
         if(!_categoryRepository.Exists(id))
             return NotFound();
 
-        var pokemons = _categoryRepository.GetPokemonsByCategoryId(id);
+        var pokemons = _pokemonRepository.GetAllByCategoryId(id);
         var pokemonDtos = _mapper.Map<IEnumerable<PokemonDto>>(pokemons);
 
         if (!ModelState.IsValid)

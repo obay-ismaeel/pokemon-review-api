@@ -4,14 +4,13 @@ namespace PokemonReviewApp.Repositories;
 
 public interface ICategoryRepository
 {
-    ICollection<Category> GetAll();
     Category GetById(int id);
-    ICollection<Pokemon> GetPokemonsByCategoryId(int id);
-    bool Exists(int id);
-    bool Exists(string name);
+    ICollection<Category> GetAll();
     bool Create(Category category);
     bool Update(Category category);
     bool Delete(int id);
+    bool Exists(int id);
+    bool Exists(string name);
     bool Save();
 
 }

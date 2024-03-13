@@ -12,12 +12,14 @@ public class OwnersController : ControllerBase
 {
     private readonly IOwnerRepository _ownerRepository;
     private readonly ICountryRepository _countryRepository;
+    private readonly IPokemonRepository _pokemonRepository;
     private readonly IMapper _mapper;
 
-    public OwnersController(IOwnerRepository ownerRepository, ICountryRepository countryRepository, IMapper mapper)
+    public OwnersController(IOwnerRepository ownerRepository, ICountryRepository countryRepository, IPokemonRepository pokemonRepository, IMapper mapper)
     {
         _ownerRepository = ownerRepository;
         _countryRepository = countryRepository;
+        _pokemonRepository = pokemonRepository;
         _mapper = mapper;
     }
 
@@ -60,7 +62,7 @@ public class OwnersController : ControllerBase
         if (!_ownerRepository.Exists(id))
             return NotFound();
 
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_ownerRepository.GetPokemonByOwnerId(id));
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAllByOwnerId(id));
         
         if(!ModelState.IsValid)
             return BadRequest(ModelState);

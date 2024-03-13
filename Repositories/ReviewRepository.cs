@@ -12,20 +12,11 @@ public class ReviewRepository : IReviewRepository
         _context = context;
     }
 
-    public bool Create(Review review)
+    public Review GetById(int id)
     {
-        _context.Reviews.Add(review);
-        return _context.SaveChanges() > 0 ? true : false;
+        return _context.Reviews.Find(id);
     }
-
-    public bool Delete(int id)
-    {
-        var item = _context.Reviews.Find(id);
-        if (item != null)
-            _context.Reviews.Remove(item);
-        return Save();
-    }
-
+    
     public ICollection<Review> GetAll()
     {
         return _context.Reviews.ToList();
@@ -36,11 +27,31 @@ public class ReviewRepository : IReviewRepository
         return _context.Reviews.Where(r => r.PokemonId == id).ToList();
     }
 
-    public Review GetById(int id)
+    public ICollection<Review> GetAllByReviewerId(int id)
     {
-        return _context.Reviews.Find(id);
+        return _context.Reviews.Where(r => r.ReviewerId == id).ToList();
     }
 
+    public bool Create(Review review)
+    {
+        _context.Reviews.Add(review);
+        return _context.SaveChanges() > 0 ? true : false;
+    }
+    
+    public bool Update(Review review)
+    {
+        _context.Reviews.Update(review);
+        return Save();
+    }
+    
+    public bool Delete(int id)
+    {
+        var item = _context.Reviews.Find(id);
+        if (item != null)
+            _context.Reviews.Remove(item);
+        return Save();
+    }
+    
     public bool Exists(int id)
     {
         return _context.Reviews.Any(r => r.Id == id);
@@ -49,11 +60,5 @@ public class ReviewRepository : IReviewRepository
     public bool Save()
     {
         return _context.SaveChanges() > 0 ? true : false;
-    }
-
-    public bool Update(Review review)
-    {
-        _context.Reviews.Update(review);
-        return Save();
     }
 }

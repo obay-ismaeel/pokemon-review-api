@@ -12,11 +12,13 @@ public class CountriesController : ControllerBase
 {
     private readonly IMapper _mapper;
     private readonly ICountryRepository _countryRepository;
+    private readonly IOwnerRepository _ownerRepository;
 
-    public CountriesController(IMapper mapper, ICountryRepository countryRepository)
+    public CountriesController(IMapper mapper, ICountryRepository countryRepository, IOwnerRepository ownerRepository)
     {
         _mapper = mapper;
         _countryRepository = countryRepository;
+        _ownerRepository = ownerRepository;
     }
 
     [HttpGet]
@@ -75,7 +77,7 @@ public class CountriesController : ControllerBase
         if(!_countryRepository.Exists(id))
             return NotFound();
 
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_countryRepository.GetOwnersByCountry(id));
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByCountryId(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);

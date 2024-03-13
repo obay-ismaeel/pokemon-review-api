@@ -11,6 +11,16 @@ public class ReviewerRepository : IReviewerRepository
     {
         _context = context;
     }
+    
+    public Reviewer GetById(int id)
+    {
+        return _context.Reviewers.Find(id);
+    }
+    
+    public ICollection<Reviewer> GetAll()
+    {
+        return _context.Reviewers.ToList();
+    }
 
     public bool Create(Reviewer reviewer)
     {
@@ -18,6 +28,12 @@ public class ReviewerRepository : IReviewerRepository
         return _context.SaveChanges() > 0 ? true : false;
     }
 
+    public bool Update(Reviewer reviewer)
+    {
+        _context.Reviewers.Update(reviewer);
+        return Save();
+    }
+    
     public bool Delete(int id)
     {
         var item = _context.Reviewers.Find(id);
@@ -25,35 +41,14 @@ public class ReviewerRepository : IReviewerRepository
             _context.Reviewers.Remove(item);
         return Save();
     }
-
-    public ICollection<Reviewer> GetAll()
-    {
-        return _context.Reviewers.ToList();
-    }
-
-    public Reviewer GetById(int id)
-    {
-        return _context.Reviewers.Find(id);
-    }
-
-    public ICollection<Review> GetReviewsByReviewerId(int id)
-    {
-        return _context.Reviews.Where(r => r.ReviewerId == id).ToList();
-    }
-
+    
     public bool Exists(int id)
     {
         return _context.Reviewers.Any(r => r.Id == id);
     }
-
+    
     public bool Save()
     {
         return _context.SaveChanges() > 0 ? true : false;
-    }
-
-    public bool Update(Reviewer reviewer)
-    {
-        _context.Reviewers.Update(reviewer);
-        return Save();
     }
 }

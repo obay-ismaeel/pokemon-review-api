@@ -13,6 +13,16 @@ public class CategoryRepository : ICategoryRepository
         _context = context;
     }
 
+    public Category GetById(int id)
+    {
+        return _context.Categories.Find(id);
+    }
+
+    public ICollection<Category> GetAll()
+    {
+        return _context.Categories.ToList();
+    }
+
     public bool Create(Category category)
     {
         _context.Categories.Add(category);
@@ -22,6 +32,14 @@ public class CategoryRepository : ICategoryRepository
     public bool Update(Category category)
     {
         _context.Categories.Update(category);
+        return Save();
+    }
+
+    public bool Delete(int id)
+    {
+        var item = _context.Categories.Find(id);
+        if (item != null)
+            _context.Categories.Remove(item);
         return Save();
     }
 
@@ -37,33 +55,8 @@ public class CategoryRepository : ICategoryRepository
         return category is null ? false : true;
     }
 
-    public ICollection<Category> GetAll()
-    {
-        return _context.Categories.ToList();
-    }
-
-    public Category GetById(int id)
-    {
-        return _context.Categories.Find(id);
-    }
-
-    public ICollection<Pokemon> GetPokemonsByCategoryId(int id)
-    {
-        var category = _context.Categories.Include(c => c.Pokemons).SingleOrDefault(c => c.Id == id);
-        
-        return category?.Pokemons ?? new List<Pokemon>();
-    }
-
     public bool Save()
     {
         return _context.SaveChanges() > 0 ? true : false;
-    }
-
-    public bool Delete(int id)
-    {
-        var item = _context.Categories.Find(id);
-        if (item != null)
-            _context.Categories.Remove(item);
-        return Save();
     }
 }
