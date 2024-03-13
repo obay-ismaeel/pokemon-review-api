@@ -41,7 +41,7 @@ public class ReviewRepository : IReviewRepository
         return _context.Reviews.Find(id);
     }
 
-    public bool ReviewExists(int id)
+    public bool Exists(int id)
     {
         return _context.Reviews.Any(r => r.Id == id);
     }

@@ -27,16 +27,23 @@ public class PokemonRepository : IPokemonRepository
             _context.Pokemons.Remove(item);
         return Save();
     }
-    public ICollection<Pokemon> GetAll() => _context.Pokemons.OrderBy(p => p.Name).ToList();
 
-    public Pokemon GetById(int id) => _context.Pokemons.Find(id);
+    public ICollection<Pokemon> GetAll()
+    {
+        return _context.Pokemons.OrderBy(p => p.Name).ToList();
+    }
+
+    public Pokemon GetById(int id)
+    {
+        return _context.Pokemons.Find(id);
+    }
 
     public Pokemon GetByName(string name)
     {
         return _context.Pokemons.FirstOrDefault(p => p.Name == name);
     }
 
-    public decimal GetPokemonRating(int id)
+    public decimal GetRatingById(int id)
     {
         var reviews = _context.Reviews.Where(r => r.PokemonId == id).ToList();
 
@@ -46,7 +53,7 @@ public class PokemonRepository : IPokemonRepository
         return (decimal)reviews.Average(r => r.Rating);
     }
 
-    public bool PokemonExists(int id)
+    public bool Exists(int id)
     {
         return _context.Pokemons.Any(p => p.Id == id);
     }

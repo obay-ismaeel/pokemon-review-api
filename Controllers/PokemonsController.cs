@@ -56,10 +56,10 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(200, Type = typeof(decimal))]
     public IActionResult GetPokemonRating(int id)
     {
-        if (!_pokemonRepository.PokemonExists(id))
+        if (!_pokemonRepository.Exists(id))
             return NotFound();
 
-        var rating = _pokemonRepository.GetPokemonRating(id);
+        var rating = _pokemonRepository.GetRatingById(id);
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -95,7 +95,7 @@ public class PokemonsController : ControllerBase
         if (pokemonDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_pokemonRepository.PokemonExists(id))
+        if (!_pokemonRepository.Exists(id))
             return NotFound("There is no such ID!");
 
         var pokemon = _mapper.Map<Pokemon>(pokemonDto);
@@ -118,7 +118,7 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_pokemonRepository.PokemonExists(id))
+        if (!_pokemonRepository.Exists(id))
             return NotFound("Invalid pokemon ID!");
 
         _pokemonRepository.Delete(id);

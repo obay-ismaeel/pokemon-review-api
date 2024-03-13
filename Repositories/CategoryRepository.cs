@@ -25,12 +25,12 @@ public class CategoryRepository : ICategoryRepository
         return Save();
     }
 
-    public bool CategoryExists(int id)
+    public bool Exists(int id)
     {
         return _context.Categories.Any(c => c.Id == id);
     }
 
-    public bool CategoryExists(string name)
+    public bool Exists(string name)
     {
         name = name.ToLower().Trim();
         var category = _context.Categories.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();

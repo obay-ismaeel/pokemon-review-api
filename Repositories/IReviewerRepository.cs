@@ -7,7 +7,7 @@ public interface IReviewerRepository
     ICollection<Reviewer> GetAll();
     Reviewer GetById(int id);
     ICollection<Review> GetReviewsByReviewerId(int id);
-    bool ReviewerExists(int id);
+    bool Exists(int id);
     bool Create(Reviewer reviewer);
     bool Update(Reviewer reviewer);
     bool Delete(int id);

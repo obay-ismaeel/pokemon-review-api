@@ -12,12 +12,12 @@ public class CountryRepository : ICountryRepository
         _context = context;
     }
 
-    public bool CountryExists(int id)
+    public bool Exists(int id)
     {
         return _context.Countries.Any(c => c.Id == id);
     }
 
-    public bool CountryExists(string name)
+    public bool Exists(string name)
     {
         name = name.ToLower().Trim();
         var country = _context.Countries.Where(c => c.Name.ToLower().Trim() == name).FirstOrDefault();
@@ -48,7 +48,7 @@ public class CountryRepository : ICountryRepository
         return _context.Countries.Find(id);
     }
 
-    public Country GetCountryByOwner(int id)
+    public Country GetByOwnerId(int id)
     {
         return _context.Owners.Where(o => o.Id == id).Select(o=>o.Country).FirstOrDefault();
     }

@@ -71,13 +71,13 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(ReviewDto reviewDto)
     {
-        if (!_reviewerRepository.ReviewerExists(reviewDto.ReviewerId))
+        if (!_reviewerRepository.Exists(reviewDto.ReviewerId))
         {
             ModelState.AddModelError("error", "No such reviewer!");
             return BadRequest(ModelState);
         }
 
-        if (!_pokemonRepository.PokemonExists(reviewDto.PokemonId))
+        if (!_pokemonRepository.Exists(reviewDto.PokemonId))
         {
             ModelState.AddModelError("error", "No such pokemon!");
             return BadRequest(ModelState);
@@ -106,13 +106,13 @@ public class ReviewsController : ControllerBase
         if(reviewDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_reviewRepository.ReviewExists(id))
+        if (!_reviewRepository.Exists(id))
             return NotFound("Invalid review ID!");
         
-        if (!_reviewerRepository.ReviewerExists(reviewDto.ReviewerId))
+        if (!_reviewerRepository.Exists(reviewDto.ReviewerId))
             return BadRequest("Invalid reviewer ID!");
 
-        if (!_pokemonRepository.PokemonExists(reviewDto.PokemonId))
+        if (!_pokemonRepository.Exists(reviewDto.PokemonId))
             return BadRequest("Invalid pokemon ID!");
 
         var review = _mapper.Map<Review>(reviewDto);
@@ -135,7 +135,7 @@ public class ReviewsController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_pokemonRepository.PokemonExists(id))
+        if (!_pokemonRepository.Exists(id))
             return NotFound("Invalid pokemon ID!");
 
         _pokemonRepository.Delete(id);

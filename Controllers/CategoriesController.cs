@@ -55,7 +55,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult GetPokemonByCategoryId(int id)
     {
-        if(!_categoryRepository.CategoryExists(id))
+        if(!_categoryRepository.Exists(id))
             return NotFound();
 
         var pokemons = _categoryRepository.GetPokemonsByCategoryId(id);
@@ -73,7 +73,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(409)]
     public IActionResult Create(CategoryDto categoryDto)
     {
-        if (_categoryRepository.CategoryExists(categoryDto.Name))
+        if (_categoryRepository.Exists(categoryDto.Name))
         {
             ModelState.AddModelError("error", "Category already exists!");
             return Conflict(ModelState);
@@ -102,7 +102,7 @@ public class CategoriesController : ControllerBase
         if (categoryDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_categoryRepository.CategoryExists(id))
+        if (!_categoryRepository.Exists(id))
             return NotFound("The category doesn't exist!");
 
         var category = _mapper.Map<Category>(categoryDto);
@@ -125,7 +125,7 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_categoryRepository.CategoryExists(id))
+        if (!_categoryRepository.Exists(id))
             return NotFound("Invalid category ID!");
 
         _categoryRepository.Delete(id);

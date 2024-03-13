@@ -55,7 +55,7 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetReviewerReviews(int id)
     {
-        if (!_reviewerRepository.ReviewerExists(id))
+        if (!_reviewerRepository.Exists(id))
             return NotFound();
 
         var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewerRepository.GetReviewsByReviewerId(id));
@@ -94,7 +94,7 @@ public class ReviewersController : ControllerBase
         if (reviewerDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
-        if (!_reviewerRepository.ReviewerExists(id))
+        if (!_reviewerRepository.Exists(id))
             return NotFound("There is no such Id!");
 
         var reviewer = _mapper.Map<Reviewer>(reviewerDto);
@@ -117,7 +117,7 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_reviewerRepository.ReviewerExists(id))
+        if (!_reviewerRepository.Exists(id))
             return NotFound("Invalid reviewer ID!");
 
         _reviewerRepository.Delete(id);

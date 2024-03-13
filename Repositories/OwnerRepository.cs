@@ -43,12 +43,12 @@ public class OwnerRepository : IOwnerRepository
         return _context.Owners.Find(id);
     }
 
-    public ICollection<Owner> GetOwnersByCountry(int id)
+    public ICollection<Owner> GetAllByCountryId(int id)
     {
         return _context.Owners.Where(o => o.CountryId == id).ToList();
     }
 
-    public ICollection<Owner> GetOwnersOfPokemon(int id)
+    public ICollection<Owner> GetAllByPokemonId(int id)
     {
         return _context.Pokemons.Include(p => p.Owners).SingleOrDefault(p => p.Id == id)?.Owners;
     }
@@ -59,7 +59,7 @@ public class OwnerRepository : IOwnerRepository
     }
 
 
-    public bool OwnerExists(int id)
+    public bool Exists(int id)
     {
         return _context.Owners.Any(o => o.Id == id);
     }

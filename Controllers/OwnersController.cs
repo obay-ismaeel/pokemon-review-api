@@ -57,7 +57,7 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetOwnerPokemons(int id)
     {
-        if (!_ownerRepository.OwnerExists(id))
+        if (!_ownerRepository.Exists(id))
             return NotFound();
 
         var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_ownerRepository.GetPokemonByOwnerId(id));
@@ -74,7 +74,7 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetPokemonOwners(int id)
     {
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetOwnersOfPokemon(id));
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByPokemonId(id));
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -87,7 +87,7 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(OwnerDto ownerDto)
     {
-        if (!_countryRepository.CountryExists(ownerDto.CountryId))
+        if (!_countryRepository.Exists(ownerDto.CountryId))
         {
             ModelState.AddModelError("error", "No such country is found!");
             return BadRequest(ModelState);
@@ -116,10 +116,10 @@ public class OwnersController : ControllerBase
         if (ownerDto.Id != id)
             return BadRequest("The provided IDs doesn't match!");
 
-        if (!_ownerRepository.OwnerExists(id))
+        if (!_ownerRepository.Exists(id))
             return NotFound("Invalid owner ID!");
 
-        if (!_countryRepository.CountryExists(ownerDto.CountryId))
+        if (!_countryRepository.Exists(ownerDto.CountryId))
             return BadRequest("Invalid country ID!");
 
         var owner = _mapper.Map<Owner>(ownerDto);
@@ -142,7 +142,7 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_ownerRepository.OwnerExists(id))
+        if (!_ownerRepository.Exists(id))
             return NotFound("Invalid owner ID!");
 
         _ownerRepository.Delete(id);

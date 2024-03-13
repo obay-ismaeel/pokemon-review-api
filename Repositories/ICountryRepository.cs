@@ -6,10 +6,10 @@ public interface ICountryRepository
 {
     ICollection<Country> GetAll();
     Country GetById(int id);
-    Country GetCountryByOwner(int id);
+    Country GetByOwnerId(int id);
     ICollection<Owner> GetOwnersByCountry(int id);
-    bool CountryExists(int id);
-    bool CountryExists(string name);
+    bool Exists(int id);
+    bool Exists(string name);
     bool Create(Country country);
     bool Update(Country country);
     bool Delete(int id);

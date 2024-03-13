@@ -55,7 +55,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetCountryByOwner(int id)
     {
-        var country = _mapper.Map<CountryDto>(_countryRepository.GetCountryByOwner(id));
+        var country = _mapper.Map<CountryDto>(_countryRepository.GetByOwnerId(id));
 
         if (country is null)
             return NotFound();
@@ -72,7 +72,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetOwnersByCountry(int id)
     {
-        if(!_countryRepository.CountryExists(id))
+        if(!_countryRepository.Exists(id))
             return NotFound();
 
         var owners = _mapper.Map<IEnumerable<OwnerDto>>(_countryRepository.GetOwnersByCountry(id));
@@ -89,7 +89,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(409)]
     public IActionResult Create(CountryDto countryDto)
     {
-        if (_countryRepository.CountryExists(countryDto.Name))
+        if (_countryRepository.Exists(countryDto.Name))
         {
             ModelState.AddModelError("error", "Country already exists!");
             return Conflict(ModelState);
@@ -118,7 +118,7 @@ public class CountriesController : ControllerBase
         if (countryDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
-        if (!_countryRepository.CountryExists(id))
+        if (!_countryRepository.Exists(id))
             return NotFound("There is no such Id!");
 
         var country = _mapper.Map<Country>(countryDto);
@@ -141,7 +141,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
-        if (!_countryRepository.CountryExists(id))
+        if (!_countryRepository.Exists(id))
             return NotFound("Invalid country ID!");
 
         _countryRepository.Delete(id);

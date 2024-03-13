@@ -41,7 +41,7 @@ public class ReviewerRepository : IReviewerRepository
         return _context.Reviews.Where(r => r.ReviewerId == id).ToList();
     }
 
-    public bool ReviewerExists(int id)
+    public bool Exists(int id)
     {
         return _context.Reviewers.Any(r => r.Id == id);
     }
