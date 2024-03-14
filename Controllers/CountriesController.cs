@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PokemonReviewApp.Dtos;
+using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
 
@@ -142,6 +143,7 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
     [ProducesResponseType(404)]
+    [LogSensitiveAction]
     public IActionResult Delete(int id)
     {
         if (!ModelState.IsValid)
