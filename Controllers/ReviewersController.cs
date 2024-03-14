@@ -26,10 +26,10 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Index()
     {
-        var categories = _mapper.Map<IEnumerable<ReviewerDto>>(_reviewerRepository.GetAll());
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var categories = _mapper.Map<IEnumerable<ReviewerDto>>(_reviewerRepository.GetAll());
 
         return Ok(categories);
     }
@@ -40,13 +40,13 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Show(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var reviewer = _mapper.Map<ReviewerDto>(_reviewerRepository.GetById(id));
 
         if (reviewer is null)
             return NotFound();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(reviewer);
     }
@@ -57,13 +57,13 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetReviewerReviews(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_reviewerRepository.Exists(id))
             return NotFound();
 
         var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAllByReviewerId(id));
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(reviews);
     }
@@ -73,6 +73,9 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(ReviewerDto reviewerDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var reviewer = _mapper.Map<Reviewer>(reviewerDto);
 
         if (!_reviewerRepository.Create(reviewer))
@@ -80,9 +83,6 @@ public class ReviewersController : ControllerBase
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
         }
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Created();
     }
@@ -93,6 +93,9 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Update(ReviewerDto reviewerDto, int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (reviewerDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
@@ -107,9 +110,6 @@ public class ReviewersController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return NoContent();
     }
 
@@ -119,13 +119,13 @@ public class ReviewersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_reviewerRepository.Exists(id))
             return NotFound("Invalid reviewer ID!");
 
         _reviewerRepository.Delete(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return NoContent();
     }

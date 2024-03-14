@@ -23,10 +23,10 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(200, Type = typeof(IEnumerable<PokemonDto>) )]
     public IActionResult Index()
     {
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAll());
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAll());
 
         return Ok(pokemons);
     }
@@ -37,15 +37,15 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(200, Type = typeof(PokemonDto))]
     public IActionResult Show(int id)
     {
+        if(!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var pokemon = _pokemonRepository.GetById(id);
 
         if (pokemon is null)
             return NotFound();
 
         var pokemonDto = _mapper.Map<PokemonDto>(pokemon);
-
-        if(!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(pokemonDto);
     }
@@ -56,13 +56,13 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(200, Type = typeof(decimal))]
     public IActionResult GetPokemonRating(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_pokemonRepository.Exists(id))
             return NotFound();
 
         var rating = _pokemonRepository.GetRatingById(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(rating);
     }
@@ -72,6 +72,9 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(PokemonDto pokemonDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var pokemon = _mapper.Map<Pokemon>(pokemonDto);
 
         if (!_pokemonRepository.Create(pokemon))
@@ -79,9 +82,6 @@ public class PokemonsController : ControllerBase
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
         }
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Created();
     }
@@ -92,6 +92,9 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Update(PokemonDto pokemonDto, int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (pokemonDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
@@ -106,9 +109,6 @@ public class PokemonsController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return NoContent();
     }
 
@@ -118,13 +118,13 @@ public class PokemonsController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_pokemonRepository.Exists(id))
             return NotFound("Invalid pokemon ID!");
 
         _pokemonRepository.Delete(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return NoContent();
     }

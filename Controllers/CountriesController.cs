@@ -26,10 +26,10 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Index()
     {
-        var countries = _mapper.Map<IEnumerable<CountryDto>>(_countryRepository.GetAll());
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var countries = _mapper.Map<IEnumerable<CountryDto>>(_countryRepository.GetAll());
 
         return Ok(countries);
     }
@@ -40,13 +40,13 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Show(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
         var country = _mapper.Map<CountryDto>(_countryRepository.GetById(id));
 
         if (country is null)
             return NotFound();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(country);
     }
@@ -57,13 +57,13 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetCountryByOwner(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var country = _mapper.Map<CountryDto>(_countryRepository.GetByOwnerId(id));
 
         if (country is null)
             return NotFound();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(country);
     }
@@ -74,13 +74,13 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetOwnersByCountry(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if(!_countryRepository.Exists(id))
             return NotFound();
 
         var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByCountryId(id));
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(owners);
     }
@@ -91,6 +91,10 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(409)]
     public IActionResult Create(CountryDto countryDto)
     {
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (_countryRepository.Exists(countryDto.Name))
         {
             ModelState.AddModelError("error", "Country already exists!");
@@ -105,9 +109,6 @@ public class CountriesController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return Created();
     }
 
@@ -117,6 +118,9 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Update(CountryDto countryDto, int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (countryDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
@@ -131,9 +135,6 @@ public class CountriesController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return NoContent();
     }
 
@@ -143,13 +144,13 @@ public class CountriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_countryRepository.Exists(id))
             return NotFound("Invalid country ID!");
 
         _countryRepository.Delete(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return NoContent();
     }

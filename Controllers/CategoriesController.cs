@@ -27,10 +27,11 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Index()
     {
-        var categories = _mapper.Map<IEnumerable<CategoryDto>>( _categoryRepository.GetAll());
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var categories = _mapper.Map<IEnumerable<CategoryDto>>( _categoryRepository.GetAll());
 
         return Ok(categories);
     }
@@ -41,13 +42,13 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Show(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var category = _mapper.Map<CategoryDto>(_categoryRepository.GetById(id));
 
         if (category is null)
             return NotFound();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(category);
     }
@@ -57,14 +58,14 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult GetPokemonByCategoryId(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if(!_categoryRepository.Exists(id))
             return NotFound();
 
         var pokemons = _pokemonRepository.GetAllByCategoryId(id);
         var pokemonDtos = _mapper.Map<IEnumerable<PokemonDto>>(pokemons);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(pokemonDtos);
     }
@@ -75,22 +76,22 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(409)]
     public IActionResult Create(CategoryDto categoryDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (_categoryRepository.Exists(categoryDto.Name))
         {
             ModelState.AddModelError("error", "Category already exists!");
             return Conflict(ModelState);
         }
-
-        var category = _mapper.Map<Category>(categoryDto);
         
+        var category = _mapper.Map<Category>(categoryDto);
+
         if (!_categoryRepository.Create(category))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
         }
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Created();
     }
@@ -101,6 +102,9 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Update(CategoryDto categoryDto, int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (categoryDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
@@ -115,9 +119,6 @@ public class CategoriesController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return NoContent();
     }
 
@@ -127,13 +128,13 @@ public class CategoriesController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_categoryRepository.Exists(id))
             return NotFound("Invalid category ID!");
 
         _categoryRepository.Delete(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return NoContent();
     }

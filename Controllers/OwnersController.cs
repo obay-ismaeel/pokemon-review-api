@@ -28,10 +28,10 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Index()
     {
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAll());
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAll());
 
         return Ok(owners);
     }
@@ -42,13 +42,13 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Show(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var owner = _mapper.Map<OwnerDto>(_ownerRepository.GetById(id));
 
         if (owner is null)
             return NotFound();
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return Ok(owner);
     }
@@ -59,13 +59,13 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetOwnerPokemons(int id)
     {
-        if (!_ownerRepository.Exists(id))
-            return NotFound();
-
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAllByOwnerId(id));
-        
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        if (!_ownerRepository.Exists(id))
+            return NotFound();
+        
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAllByOwnerId(id));
 
         return Ok(pokemons);
     }
@@ -76,10 +76,10 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult GetPokemonOwners(int id)
     {
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByPokemonId(id));
-
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
+
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByPokemonId(id));
 
         return Ok(owners);
     }
@@ -89,6 +89,9 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(400)]
     public IActionResult Create(OwnerDto ownerDto)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_countryRepository.Exists(ownerDto.CountryId))
         {
             ModelState.AddModelError("error", "No such country is found!");
@@ -103,9 +106,6 @@ public class OwnersController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return Created();
     }
 
@@ -115,6 +115,9 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Update(OwnerDto ownerDto, int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (ownerDto.Id != id)
             return BadRequest("The provided IDs doesn't match!");
 
@@ -132,9 +135,6 @@ public class OwnersController : ControllerBase
             return StatusCode(500, ModelState);
         }
 
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         return Created();
     }
 
@@ -144,13 +144,13 @@ public class OwnersController : ControllerBase
     [ProducesResponseType(404)]
     public IActionResult Delete(int id)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         if (!_ownerRepository.Exists(id))
             return NotFound("Invalid owner ID!");
 
         _ownerRepository.Delete(id);
-
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
 
         return NoContent();
     }
