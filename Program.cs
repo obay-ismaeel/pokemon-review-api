@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
+using PokemonReviewApp.Middlewares;
 using PokemonReviewApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,8 +35,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
 
+app.UseAuthorization();
+
+app.UseMiddleware<ProfilingMiddleware>();
+
+app.MapControllers();
 
 app.Run();
