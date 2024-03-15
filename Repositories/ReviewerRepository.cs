@@ -30,6 +30,7 @@ public class ReviewerRepository : IReviewerRepository
 
     public bool Update(Reviewer reviewer)
     {
+        reviewer.Id = null;
         _context.Reviewers.Update(reviewer);
         return Save();
     }

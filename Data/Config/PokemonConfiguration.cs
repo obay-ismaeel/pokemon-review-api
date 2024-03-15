@@ -10,7 +10,7 @@ public class PokemonConfiguration : IEntityTypeConfiguration<Pokemon>
     {
         builder.ToTable("Pokemons");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasMany(x => x.Reviews)
             .WithOne(x => x.Pokemon)

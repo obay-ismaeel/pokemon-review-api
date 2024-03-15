@@ -10,7 +10,7 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
     {
         builder.ToTable("Categories");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasMany(x => x.Pokemons)
             .WithMany(x => x.Categories)

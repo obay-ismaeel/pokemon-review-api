@@ -10,6 +10,6 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
     {
         builder.ToTable("Reviews");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

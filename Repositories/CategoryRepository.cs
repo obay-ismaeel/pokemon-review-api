@@ -25,6 +25,7 @@ public class CategoryRepository : ICategoryRepository
 
     public bool Create(Category category)
     {
+        category.Id = null;
         _context.Categories.Add(category);
         return Save();
     }

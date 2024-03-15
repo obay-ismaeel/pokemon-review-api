@@ -53,6 +53,7 @@ public class PokemonRepository : IPokemonRepository
 
     public bool Create(Pokemon pokemon)
     {
+        pokemon.Id = null;
         _context.Pokemons.Add(pokemon);
         return _context.SaveChanges() > 0 ? true : false ;
     }

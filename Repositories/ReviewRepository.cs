@@ -34,6 +34,8 @@ public class ReviewRepository : IReviewRepository
 
     public bool Create(Review review)
     {
+
+        review.Id = null;
         _context.Reviews.Add(review);
         return _context.SaveChanges() > 0 ? true : false;
     }

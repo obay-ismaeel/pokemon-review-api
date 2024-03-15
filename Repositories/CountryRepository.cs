@@ -29,6 +29,7 @@ public class CountryRepository : ICountryRepository
 
     public bool Create(Country country)
     {
+        country.Id = null;
         _context.Countries.Add(country);
         return Save();
     }

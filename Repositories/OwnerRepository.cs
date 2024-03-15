@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Models;
+using System.Diagnostics.Metrics;
 
 namespace PokemonReviewApp.Repositories;
 
@@ -35,6 +36,7 @@ public class OwnerRepository : IOwnerRepository
 
     public bool Create(Owner owner)
     {
+        owner.Id = null;
         _context.Owners.Add(owner);
         return Save();
     }

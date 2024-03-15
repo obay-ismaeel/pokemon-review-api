@@ -10,7 +10,7 @@ public class OwnerConfiguration : IEntityTypeConfiguration<Owner>
     {
         builder.ToTable("Owners");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasMany(x => x.Pokemons)
             .WithMany(x => x.Owners)

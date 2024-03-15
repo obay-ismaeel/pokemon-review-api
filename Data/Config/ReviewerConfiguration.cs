@@ -10,7 +10,7 @@ public class ReviewerConfiguration : IEntityTypeConfiguration<Reviewer>
     {
         builder.ToTable("Reviewers");
         builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
         builder.HasMany(x => x.Reviews)
             .WithOne(x => x.Reviewer)
