@@ -6,6 +6,7 @@ namespace PokemonReviewApp.Data;
 
 public class AppDbContext : DbContext
 {
+    public DbSet<User> Users { get; set; }
     public DbSet<Pokemon> Pokemons { get; set; }
     public DbSet<Category> Categories { get; set; }
     public DbSet<Country> Countries { get; set; }

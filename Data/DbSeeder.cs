@@ -10,6 +10,7 @@ public static class DbSeeder
         context.Database.EnsureDeleted();
         context.Database.EnsureCreated();
 
+        context.Users.AddRange(LoadUsers());
         context.Categories.AddRange(LoadCategories());
         context.Countries.AddRange(LoadCountries());
         context.Reviewers.AddRange(LoadReviewers());
@@ -101,5 +102,12 @@ public static class DbSeeder
         new PokemonOwner {OwnerId = 4, PokemonId=4 },
         new PokemonOwner {OwnerId = 5, PokemonId=5 },
         new PokemonOwner {OwnerId = 5, PokemonId=1 },
+    };
+
+    public static IEnumerable<User> LoadUsers() => new List<User>()
+    {
+        new User{FullName="Obay Ismaeel", Email="obayhany@gmail.com", BirthDate = new DateTime(2001,8,31), IsAdmin = true, Password = "password"},
+        new User{FullName = "Ahmad Mo", Email="any@gmail.com", BirthDate = new DateTime(2001,5,3), IsAdmin = false, Password = "password"},
+        new User{FullName = "Hasan Ibra", Email="someone@gmail.com", BirthDate = new DateTime(2004,2,1), IsAdmin = false, Password = "password"},
     };
 }
