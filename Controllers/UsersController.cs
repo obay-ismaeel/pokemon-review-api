@@ -1,14 +1,18 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace PokemonReviewApp.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController(IUserRepository _userRepository, IMapper _mapper) : ControllerBase
+public class UsersController(IUserRepository _userRepository, IMapper _mapper, JwtOptions _jwtOptions) : ControllerBase
 {
     [HttpPost("login")]
     public IActionResult Login(UserLoginRequest userLogin)
@@ -16,10 +20,14 @@ public class UsersController(IUserRepository _userRepository, IMapper _mapper) :
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_userRepository.TryLogIn(userLogin.Email, userLogin.Password))
+        var user = _userRepository.TryLogIn(userLogin.Email, userLogin.Password);
+
+        if (user is null)
             return BadRequest("Invalid Credinatials!");
 
-        return Ok("Welcome back!");
+        var accessToken = IssueJwtToken(user);
+
+        return Ok(accessToken);
     }
 
     [HttpPost("register")]
@@ -39,6 +47,31 @@ public class UsersController(IUserRepository _userRepository, IMapper _mapper) :
             return StatusCode(500, ModelState);
         }
 
-        return Ok("Created Successfully!");
+        var accessToken = IssueJwtToken(_userRepository.GetByEmail(user.Email)!);
+
+        return Ok(accessToken);
+    }
+
+    private string IssueJwtToken(User user)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Issuer = _jwtOptions.Issuer,
+            Audience = _jwtOptions.Audience,
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Signingkey)), SecurityAlgorithms.HmacSha256),
+            Subject = new ClaimsIdentity(new Claim[]
+            {
+                new(ClaimTypes.NameIdentifier, $"{user.Id}"),
+                new(ClaimTypes.Email, user.Email)
+            })
+        };
+
+        var securityToken = tokenHandler.CreateToken(tokenDescriptor);
+        
+        var accessToken = tokenHandler.WriteToken(securityToken);
+
+        return accessToken;
     }
 }
