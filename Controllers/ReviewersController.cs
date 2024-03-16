@@ -9,6 +9,7 @@ namespace PokemonReviewApp.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ReviewersController : ControllerBase
 {
     private readonly IReviewerRepository _reviewerRepository;
