@@ -9,6 +9,7 @@ public class UserRepository(AppDbContext _context) : IUserRepository
     public bool Create(User user)
     {
         user.Password = PasswordHasher.HashPassword(user.Password);
+        user.Id = null;
         _context.Users.Add(user);
         return Save();
     }

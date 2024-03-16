@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using PokemonReviewApp.Controllers;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Models;
 
@@ -25,5 +26,7 @@ public class MappingProfiles : Profile
 
         CreateMap<ReviewerDto, Reviewer>();
         CreateMap<Reviewer, ReviewerDto>();
+
+        CreateMap<UserRegisterRequest, User>();
     }
 }
