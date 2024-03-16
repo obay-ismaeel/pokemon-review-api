@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PokemonReviewApp.Auth;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Models;
 using PokemonReviewApp.Repositories;

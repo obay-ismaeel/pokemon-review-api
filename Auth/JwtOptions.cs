@@ -1,4 +1,4 @@
-﻿namespace PokemonReviewApp;
+﻿namespace PokemonReviewApp.Auth;
 
 public class JwtOptions
 {

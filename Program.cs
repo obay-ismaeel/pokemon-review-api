@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using PokemonReviewApp;
 using System.Text;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Middlewares;
 using PokemonReviewApp.Repositories;
+using PokemonReviewApp.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
