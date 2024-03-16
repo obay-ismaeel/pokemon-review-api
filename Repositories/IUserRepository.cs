@@ -4,13 +4,14 @@ namespace PokemonReviewApp.Repositories;
 
 public interface IUserRepository
 {
-    User GetById(int id);
+    User? GetById(int id);
+    User? GetByEmail(string email);
     ICollection<User> GetAll();
     bool Create(User user);
     bool Update(User user);
     bool Delete(int id);
     bool Exists(int id);
     bool Exists(string email);
-    bool TryLogIn(string email, string password);
+    User? TryLogIn(string email, string password);
     bool Save();
 }
