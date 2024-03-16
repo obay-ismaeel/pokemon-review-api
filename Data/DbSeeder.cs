@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PokemonReviewApp.Helper;
 using PokemonReviewApp.Models;
 
 namespace PokemonReviewApp.Data;
@@ -106,8 +107,8 @@ public static class DbSeeder
 
     public static IEnumerable<User> LoadUsers() => new List<User>()
     {
-        new User{FullName="Obay Ismaeel", Email="obayhany@gmail.com", BirthDate = new DateTime(2001,8,31), IsAdmin = true, Password = "password"},
-        new User{FullName = "Ahmad Mo", Email="any@gmail.com", BirthDate = new DateTime(2001,5,3), IsAdmin = false, Password = "password"},
-        new User{FullName = "Hasan Ibra", Email="someone@gmail.com", BirthDate = new DateTime(2004,2,1), IsAdmin = false, Password = "password"},
+        new User{FullName="Obay Ismaeel", Email="obayhany@gmail.com", BirthDate = new DateTime(2001,8,31), IsAdmin = true, Password = PasswordHasher.HashPassword("password")},
+        new User{FullName = "Ahmad Mo", Email="any@gmail.com", BirthDate = new DateTime(2001,5,3), IsAdmin = false, Password = PasswordHasher.HashPassword("something")},
+        new User{FullName = "Hasan Ibra", Email="someone@gmail.com", BirthDate = new DateTime(2004,2,1), IsAdmin = false, Password = PasswordHasher.HashPassword("password")},
     };
 }

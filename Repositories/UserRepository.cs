@@ -1,4 +1,5 @@
 ﻿using PokemonReviewApp.Data;
+using PokemonReviewApp.Helper;
 using PokemonReviewApp.Models;
 
 namespace PokemonReviewApp.Repositories;
@@ -7,6 +8,7 @@ public class UserRepository(AppDbContext _context) : IUserRepository
 {
     public bool Create(User user)
     {
+        user.Password = PasswordHasher.HashPassword(user.Password);
         _context.Users.Add(user);
         return Save();
     }
@@ -27,8 +29,8 @@ public class UserRepository(AppDbContext _context) : IUserRepository
     public bool TryLogIn(string email, string password)
     {
         var user = _context.Users.Where(u => u.Email == email).SingleOrDefault();
-        if (user is null) return false;
-        return user.Password == password ? true : false;
+        if ( user is null ) return false;
+        return PasswordHasher.VerifyPassword(password, user.Password) ? true : false;
     }
 
     public bool Exists(string email)
