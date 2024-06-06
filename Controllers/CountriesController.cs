@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
@@ -8,20 +9,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class CountriesController : ControllerBase
+public class CountriesController : BaseController
 {
-    private readonly IMapper _mapper;
-    private readonly ICountryRepository _countryRepository;
-    private readonly IOwnerRepository _ownerRepository;
-
-    public CountriesController(IMapper mapper, ICountryRepository countryRepository, IOwnerRepository ownerRepository)
+    public CountriesController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _mapper = mapper;
-        _countryRepository = countryRepository;
-        _ownerRepository = ownerRepository;
     }
 
     [HttpGet]
@@ -32,7 +23,7 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var countries = _mapper.Map<IEnumerable<CountryDto>>(_countryRepository.GetAll());
+        var countries = _mapper.Map<IEnumerable<CountryDto>>(_unitOfWork.Countries.GetAll());
 
         return Ok(countries);
     }
@@ -46,7 +37,7 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var country = _mapper.Map<CountryDto>(_countryRepository.GetById(id));
+        var country = _mapper.Map<CountryDto>(_unitOfWork.Countries.GetById(id));
 
         if (country is null)
             return NotFound();
@@ -63,7 +54,7 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var country = _mapper.Map<CountryDto>(_countryRepository.GetByOwnerId(id));
+        var country = _mapper.Map<CountryDto>(_unitOfWork.Countries.GetByOwnerId(id));
 
         if (country is null)
             return NotFound();
@@ -80,10 +71,10 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if(!_countryRepository.Exists(id))
+        if(!_unitOfWork.Countries.Exists(id))
             return NotFound();
 
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByCountryId(id));
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_unitOfWork.Owners.GetAllByCountryId(id));
 
         return Ok(owners);
     }
@@ -98,7 +89,7 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (_countryRepository.Exists(countryDto.Name))
+        if (_unitOfWork.Countries.Exists(countryDto.Name))
         {
             ModelState.AddModelError("error", "Country already exists!");
             return Conflict(ModelState);
@@ -106,7 +97,7 @@ public class CountriesController : ControllerBase
 
         var country = _mapper.Map<Country>(countryDto);
 
-        if (!_countryRepository.Create(country))
+        if (!_unitOfWork.Countries.Create(country))
         {
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
@@ -127,12 +118,12 @@ public class CountriesController : ControllerBase
         if (countryDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
-        if (!_countryRepository.Exists(id))
+        if (!_unitOfWork.Countries.Exists(id))
             return NotFound("There is no such Id!");
 
         var country = _mapper.Map<Country>(countryDto);
 
-        if (!_countryRepository.Update(country))
+        if (!_unitOfWork.Countries.Update(country))
         {
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
@@ -151,10 +142,10 @@ public class CountriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_countryRepository.Exists(id))
+        if (!_unitOfWork.Countries.Exists(id))
             return NotFound("Invalid country ID!");
 
-        _countryRepository.Delete(id);
+        _unitOfWork.Countries.Delete(id);
 
         return NoContent();
     }

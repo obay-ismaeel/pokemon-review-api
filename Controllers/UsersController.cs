@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Auth;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Models;
@@ -11,17 +12,22 @@ using System.Security.Claims;
 using System.Text;
 
 namespace PokemonReviewApp.Controllers;
-[Route("api/[controller]")]
-[ApiController]
-public class UsersController(IUserRepository _userRepository, IMapper _mapper, JwtOptions _jwtOptions) : ControllerBase
+
+public class UsersController : BaseController
 {
+    private readonly JwtOptions _jwtOptions;
+    public UsersController(IMapper mapper, IUnitOfWork unitOfWork, JwtOptions jwtOptions) : base(mapper, unitOfWork)
+    {
+        _jwtOptions = jwtOptions;
+    }
+
     [HttpPost("login")]
     public IActionResult Login(UserLoginRequest userLogin)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var user = _userRepository.TryLogIn(userLogin.Email, userLogin.Password);
+        var user = _unitOfWork.Users.TryLogIn(userLogin.Email, userLogin.Password);
 
         if (user is null)
             return BadRequest("Invalid Credinatials!");
@@ -37,18 +43,18 @@ public class UsersController(IUserRepository _userRepository, IMapper _mapper, J
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (_userRepository.Exists(register.Email))
+        if (_unitOfWork.Users.Exists(register.Email))
             return Conflict("Email already exists!");
 
         var user = _mapper.Map<User>(register);
 
-        if (!_userRepository.Create(user))
+        if (!_unitOfWork.Users.Create(user))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
         }
 
-        var accessToken = IssueJwtToken(_userRepository.GetByEmail(user.Email)!);
+        var accessToken = IssueJwtToken(_unitOfWork.Users.GetByEmail(user.Email)!);
 
         return Ok(accessToken);
     }

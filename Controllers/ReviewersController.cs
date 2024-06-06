@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
@@ -8,20 +9,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class ReviewersController : ControllerBase
+public class ReviewersController : BaseController
 {
-    private readonly IReviewerRepository _reviewerRepository;
-    private readonly IReviewRepository _reviewRepository;
-    private readonly IMapper _mapper;
-
-    public ReviewersController(IReviewerRepository reviewerRepository, IReviewRepository reviewRepository, IMapper mapper)
+    public ReviewersController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _reviewerRepository = reviewerRepository;
-        _reviewRepository = reviewRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -32,7 +23,7 @@ public class ReviewersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var categories = _mapper.Map<IEnumerable<ReviewerDto>>(_reviewerRepository.GetAll());
+        var categories = _mapper.Map<IEnumerable<ReviewerDto>>(_unitOfWork.Reviewers.GetAll());
 
         return Ok(categories);
     }
@@ -46,7 +37,7 @@ public class ReviewersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var reviewer = _mapper.Map<ReviewerDto>(_reviewerRepository.GetById(id));
+        var reviewer = _mapper.Map<ReviewerDto>(_unitOfWork.Reviewers.GetById(id));
 
         if (reviewer is null)
             return NotFound();
@@ -63,10 +54,10 @@ public class ReviewersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_reviewerRepository.Exists(id))
+        if (!_unitOfWork.Reviewers.Exists(id))
             return NotFound();
 
-        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAllByReviewerId(id));
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_unitOfWork.Reviews.GetAllByReviewerId(id));
 
         return Ok(reviews);
     }
@@ -81,7 +72,7 @@ public class ReviewersController : ControllerBase
 
         var reviewer = _mapper.Map<Reviewer>(reviewerDto);
 
-        if (!_reviewerRepository.Create(reviewer))
+        if (!_unitOfWork.Reviewers.Create(reviewer))
         {
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
@@ -102,12 +93,12 @@ public class ReviewersController : ControllerBase
         if (reviewerDto.Id != id)
             return BadRequest("The provided IDs don't match!");
 
-        if (!_reviewerRepository.Exists(id))
+        if (!_unitOfWork.Reviewers.Exists(id))
             return NotFound("There is no such Id!");
 
         var reviewer = _mapper.Map<Reviewer>(reviewerDto);
 
-        if (!_reviewerRepository.Update(reviewer))
+        if (!_unitOfWork.Reviewers.Update(reviewer))
         {
             ModelState.AddModelError("error", "Something went wrong!");
             return StatusCode(500, ModelState);
@@ -126,10 +117,10 @@ public class ReviewersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_reviewerRepository.Exists(id))
+        if (!_unitOfWork.Reviewers.Exists(id))
             return NotFound("Invalid reviewer ID!");
 
-        _reviewerRepository.Delete(id);
+        _unitOfWork.Reviewers.Delete(id);
 
         return NoContent();
     }

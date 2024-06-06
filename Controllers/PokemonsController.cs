@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
@@ -8,18 +9,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class PokemonsController : ControllerBase
+public class PokemonsController : BaseController
 {
-    private readonly IPokemonRepository _pokemonRepository;
-    private readonly IMapper _mapper;
-
-    public PokemonsController(IPokemonRepository pokemonRepository, IMapper mapper)
+    public PokemonsController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _pokemonRepository = pokemonRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -29,7 +22,7 @@ public class PokemonsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAll());
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_unitOfWork.Pokemons.GetAll());
 
         return Ok(pokemons);
     }
@@ -43,7 +36,7 @@ public class PokemonsController : ControllerBase
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var pokemon = _pokemonRepository.GetById(id);
+        var pokemon = _unitOfWork.Pokemons.GetById(id);
 
         if (pokemon is null)
             return NotFound();
@@ -62,10 +55,10 @@ public class PokemonsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_pokemonRepository.Exists(id))
+        if (!_unitOfWork.Pokemons.Exists(id))
             return NotFound();
 
-        var rating = _pokemonRepository.GetRatingById(id);
+        var rating = _unitOfWork.Pokemons.GetRatingById(id);
 
         return Ok(rating);
     }
@@ -80,7 +73,7 @@ public class PokemonsController : ControllerBase
 
         var pokemon = _mapper.Map<Pokemon>(pokemonDto);
 
-        if (!_pokemonRepository.Create(pokemon))
+        if (!_unitOfWork.Pokemons.Create(pokemon))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -101,12 +94,12 @@ public class PokemonsController : ControllerBase
         if (pokemonDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_pokemonRepository.Exists(id))
+        if (!_unitOfWork.Pokemons.Exists(id))
             return NotFound("There is no such ID!");
 
         var pokemon = _mapper.Map<Pokemon>(pokemonDto);
 
-        if (!_pokemonRepository.Update(pokemon))
+        if (!_unitOfWork.Pokemons.Update(pokemon))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -125,10 +118,10 @@ public class PokemonsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_pokemonRepository.Exists(id))
+        if (!_unitOfWork.Pokemons.Exists(id))
             return NotFound("Invalid pokemon ID!");
 
-        _pokemonRepository.Delete(id);
+        _unitOfWork.Pokemons.Delete(id);
 
         return NoContent();
     }

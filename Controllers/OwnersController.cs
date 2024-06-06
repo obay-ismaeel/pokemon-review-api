@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
+using PokemonReviewApp.Data;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
@@ -8,22 +10,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class OwnersController : ControllerBase
+public class OwnersController : BaseController
 {
-    private readonly IOwnerRepository _ownerRepository;
-    private readonly ICountryRepository _countryRepository;
-    private readonly IPokemonRepository _pokemonRepository;
-    private readonly IMapper _mapper;
-
-    public OwnersController(IOwnerRepository ownerRepository, ICountryRepository countryRepository, IPokemonRepository pokemonRepository, IMapper mapper)
+    public OwnersController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _ownerRepository = ownerRepository;
-        _countryRepository = countryRepository;
-        _pokemonRepository = pokemonRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -34,7 +24,7 @@ public class OwnersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAll());
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_unitOfWork.Owners.GetAll());
 
         return Ok(owners);
     }
@@ -48,7 +38,7 @@ public class OwnersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var owner = _mapper.Map<OwnerDto>(_ownerRepository.GetById(id));
+        var owner = _mapper.Map<OwnerDto>(_unitOfWork.Owners.GetById(id));
 
         if (owner is null)
             return NotFound();
@@ -65,10 +55,10 @@ public class OwnersController : ControllerBase
         if(!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_ownerRepository.Exists(id))
+        if (!_unitOfWork.Owners.Exists(id))
             return NotFound();
         
-        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_pokemonRepository.GetAllByOwnerId(id));
+        var pokemons = _mapper.Map<IEnumerable<PokemonDto>>(_unitOfWork.Pokemons.GetAllByOwnerId(id));
 
         return Ok(pokemons);
     }
@@ -82,7 +72,7 @@ public class OwnersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_ownerRepository.GetAllByPokemonId(id));
+        var owners = _mapper.Map<IEnumerable<OwnerDto>>(_unitOfWork.Owners.GetAllByPokemonId(id));
 
         return Ok(owners);
     }
@@ -95,7 +85,7 @@ public class OwnersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_countryRepository.Exists(ownerDto.CountryId))
+        if (!_unitOfWork.Countries.Exists(ownerDto.CountryId))
         {
             ModelState.AddModelError("error", "No such country is found!");
             return BadRequest(ModelState);
@@ -103,7 +93,7 @@ public class OwnersController : ControllerBase
 
         var owner = _mapper.Map<Owner>(ownerDto);
 
-        if (!_ownerRepository.Create(owner))
+        if (!_unitOfWork.Owners.Create(owner))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -124,15 +114,15 @@ public class OwnersController : ControllerBase
         if (ownerDto.Id != id)
             return BadRequest("The provided IDs doesn't match!");
 
-        if (!_ownerRepository.Exists(id))
+        if (!_unitOfWork.Owners.Exists(id))
             return NotFound("Invalid owner ID!");
 
-        if (!_countryRepository.Exists(ownerDto.CountryId))
+        if (!_unitOfWork.Countries.Exists(ownerDto.CountryId))
             return BadRequest("Invalid country ID!");
 
         var owner = _mapper.Map<Owner>(ownerDto);
 
-        if (!_ownerRepository.Update(owner))
+        if (!_unitOfWork.Owners.Update(owner))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -151,10 +141,10 @@ public class OwnersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_ownerRepository.Exists(id))
+        if (!_unitOfWork.Owners.Exists(id))
             return NotFound("Invalid owner ID!");
 
-        _ownerRepository.Delete(id);
+        _unitOfWork.Owners.Delete(id);
 
         return NoContent();
     }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Data;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
@@ -9,20 +10,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class CategoriesController : ControllerBase
+public class CategoriesController : BaseController
 {
-    private readonly ICategoryRepository _categoryRepository;
-    private readonly IPokemonRepository _pokemonRepository;
-    private readonly IMapper _mapper;
-
-    public CategoriesController(ICategoryRepository categoryRepository, IPokemonRepository pokemonRepository, IMapper mapper)
+    public CategoriesController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _categoryRepository = categoryRepository;
-        _pokemonRepository = pokemonRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -34,7 +25,7 @@ public class CategoriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var categories = _mapper.Map<IEnumerable<CategoryDto>>( _categoryRepository.GetAll());
+        var categories = _mapper.Map<IEnumerable<CategoryDto>>( _unitOfWork.Categories.GetAll());
 
         return Ok(categories);
     }
@@ -48,7 +39,7 @@ public class CategoriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var category = _mapper.Map<CategoryDto>(_categoryRepository.GetById(id));
+        var category = _mapper.Map<CategoryDto>(_unitOfWork.Categories.GetById(id));
 
         if (category is null)
             return NotFound();
@@ -64,10 +55,10 @@ public class CategoriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if(!_categoryRepository.Exists(id))
+        if(!_unitOfWork.Categories.Exists(id))
             return NotFound();
 
-        var pokemons = _pokemonRepository.GetAllByCategoryId(id);
+        var pokemons = _unitOfWork.Pokemons.GetAllByCategoryId(id);
         var pokemonDtos = _mapper.Map<IEnumerable<PokemonDto>>(pokemons);
 
         return Ok(pokemonDtos);
@@ -82,7 +73,7 @@ public class CategoriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (_categoryRepository.Exists(categoryDto.Name))
+        if (_unitOfWork.Categories.Exists(categoryDto.Name))
         {
             ModelState.AddModelError("error", "Category already exists!");
             return Conflict(ModelState);
@@ -90,7 +81,7 @@ public class CategoriesController : ControllerBase
         
         var category = _mapper.Map<Category>(categoryDto);
 
-        if (!_categoryRepository.Create(category))
+        if (!_unitOfWork.Categories.Create(category))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -111,12 +102,12 @@ public class CategoriesController : ControllerBase
         if (categoryDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_categoryRepository.Exists(id))
+        if (!_unitOfWork.Categories.Exists(id))
             return NotFound("The category doesn't exist!");
 
         var category = _mapper.Map<Category>(categoryDto);
 
-        if (!_categoryRepository.Update(category))
+        if (!_unitOfWork.Categories.Update(category))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -135,10 +126,10 @@ public class CategoriesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_categoryRepository.Exists(id))
+        if (!_unitOfWork.Categories.Exists(id))
             return NotFound("Invalid category ID!");
 
-        _categoryRepository.Delete(id);
+        _unitOfWork.Categories.Delete(id);
 
         return NoContent();
     }

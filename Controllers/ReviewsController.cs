@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PokemonReviewApp.Abstractions;
 using PokemonReviewApp.Dtos;
 using PokemonReviewApp.Filters;
 using PokemonReviewApp.Models;
@@ -8,22 +9,10 @@ using PokemonReviewApp.Repositories;
 
 namespace PokemonReviewApp.Controllers;
 
-[ApiController]
-[Route("api/[controller]")]
-[Authorize]
-public class ReviewsController : ControllerBase
+public class ReviewsController : BaseController
 {
-    private readonly IReviewRepository _reviewRepository;
-    private readonly IReviewerRepository _reviewerRepository;
-    private readonly IPokemonRepository _pokemonRepository;
-    private readonly IMapper _mapper;
-
-    public ReviewsController(IReviewRepository reviewRepository, IPokemonRepository pokemonRepository, IReviewerRepository reviewerRepository, IMapper mapper)
+    public ReviewsController(IMapper mapper, IUnitOfWork unitOfWork) : base(mapper, unitOfWork)
     {
-        _reviewRepository = reviewRepository;
-        _pokemonRepository = pokemonRepository;
-        _reviewerRepository = reviewerRepository;
-        _mapper = mapper;
     }
 
     [HttpGet]
@@ -34,7 +23,7 @@ public class ReviewsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAll());
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_unitOfWork.Reviews.GetAll());
 
         return Ok(reviews);
     }
@@ -48,7 +37,7 @@ public class ReviewsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var review = _mapper.Map<ReviewDto>(_reviewRepository.GetById(id));
+        var review = _mapper.Map<ReviewDto>(_unitOfWork.Reviews.GetById(id));
 
         if (review is null)
             return NotFound();
@@ -64,7 +53,7 @@ public class ReviewsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_reviewRepository.GetAllByPokemonId(id));
+        var reviews = _mapper.Map<IEnumerable<ReviewDto>>(_unitOfWork.Reviews.GetAllByPokemonId(id));
 
         return Ok(reviews);
     }
@@ -77,13 +66,13 @@ public class ReviewsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_reviewerRepository.Exists(reviewDto.ReviewerId))
+        if (!_unitOfWork.Reviewers.Exists(reviewDto.ReviewerId))
         {
             ModelState.AddModelError("error", "No such reviewer!");
             return BadRequest(ModelState);
         }
 
-        if (!_pokemonRepository.Exists(reviewDto.PokemonId))
+        if (!_unitOfWork.Pokemons.Exists(reviewDto.PokemonId))
         {
             ModelState.AddModelError("error", "No such pokemon!");
             return BadRequest(ModelState);
@@ -91,7 +80,7 @@ public class ReviewsController : ControllerBase
 
         var review = _mapper.Map<Review>(reviewDto);
 
-        if (!_reviewRepository.Create(review))
+        if (!_unitOfWork.Reviews.Create(review))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -112,18 +101,18 @@ public class ReviewsController : ControllerBase
         if(reviewDto.Id != id)
             return BadRequest("The IDs provided don't match!");
 
-        if (!_reviewRepository.Exists(id))
+        if (!_unitOfWork.Reviews.Exists(id))
             return NotFound("Invalid review ID!");
         
-        if (!_reviewerRepository.Exists(reviewDto.ReviewerId))
+        if (!_unitOfWork.Reviewers.Exists(reviewDto.ReviewerId))
             return BadRequest("Invalid reviewer ID!");
 
-        if (!_pokemonRepository.Exists(reviewDto.PokemonId))
+        if (!_unitOfWork.Pokemons.Exists(reviewDto.PokemonId))
             return BadRequest("Invalid pokemon ID!");
 
         var review = _mapper.Map<Review>(reviewDto);
 
-        if (!_reviewRepository.Update(review))
+        if (!_unitOfWork.Reviews.Update(review))
         {
             ModelState.AddModelError("error", "Something went wrong");
             return StatusCode(500, ModelState);
@@ -142,10 +131,10 @@ public class ReviewsController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!_pokemonRepository.Exists(id))
+        if (!_unitOfWork.Pokemons.Exists(id))
             return NotFound("Invalid pokemon ID!");
 
-        _pokemonRepository.Delete(id);
+        _unitOfWork.Pokemons.Delete(id);
 
         return NoContent();
     }
